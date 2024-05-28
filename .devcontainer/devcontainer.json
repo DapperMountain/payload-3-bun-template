@@ -1,0 +1,13 @@
+{
+  "name": "Node.js & PostgreSQL",
+  "dockerComposeFile": "../compose.yml",
+  "service": "payload",
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"],
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/sh"
+      }
+    }
+  }
+}

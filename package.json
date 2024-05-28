@@ -1,0 +1,48 @@
+{
+  "name": "payload-test",
+  "version": "1.0.0",
+  "description": "A blank template to get started with Payload 3.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "NODE_OPTIONS=--no-deprecation next build",
+    "dev": "NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && NODE_OPTIONS=--no-deprecation next dev",
+    "generate:types": "payload generate:types",
+    "generate:graphql": "payload-graphql generate:schema",
+    "db:seed": "tsx ./src/database/seed",
+    "lint": "NODE_OPTIONS=--no-deprecation next lint",
+    "payload": "NODE_OPTIONS=--no-deprecation payload",
+    "start": "NODE_OPTIONS=--no-deprecation next start"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "beta",
+    "@payloadcms/next": "beta",
+    "@payloadcms/richtext-lexical": "beta",
+    "graphql": "16.9.0",
+    "next": "15.0.0-canary.53",
+    "payload": "beta",
+    "react": "19.0.0-rc-6230622a1a-20240610",
+    "react-dom": "19.0.0-rc-6230622a1a-20240610"
+  },
+  "devDependencies": {
+    "@payloadcms/graphql": "beta",
+    "@types/node": "^20.14.9",
+    "@types/react": "npm:types-react@19.0.0-rc.0",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "15.0.0-canary.53",
+    "tsx": "^4.11.2",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.6.0"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@19.0.0-rc.0",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
+    "react": "19.0.0-rc-6230622a1a-20240610",
+    "react-dom": "19.0.0-rc-6230622a1a-20240610"
+  }
+}
