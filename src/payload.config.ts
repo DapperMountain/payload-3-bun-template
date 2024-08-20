@@ -29,7 +29,7 @@ export default buildConfig({
     fallback: true,
   },
   editor: lexicalEditor({}),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET ?? '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload.types.ts'),
   },

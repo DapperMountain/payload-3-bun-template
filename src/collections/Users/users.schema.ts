@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload'
 import { access } from './users.access'
 import { hooks } from './users.hooks'
-import { field, isAdmin } from '../../access'
+import { boolean, isAdmin } from '../../access'
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -47,8 +47,8 @@ const Users: CollectionConfig = {
       hasMany: true,
       access: {
         read: () => true,
-        create: field(isAdmin),
-        update: field(isAdmin),
+        create: boolean(isAdmin),
+        update: boolean(isAdmin),
       },
     },
   ],

@@ -4,7 +4,7 @@ import { Role } from './payload.types'
 type ExtendedAccessArgs = AccessArgs<any> & { siblingData?: any }
 type AccessResult = Where | boolean
 type AccessFunction = (args: ExtendedAccessArgs) => AccessResult | Promise<AccessResult>
-type FieldAccessFunction = (args: ExtendedAccessArgs) => boolean | Promise<boolean>
+type BooleanAccessFunction = (args: ExtendedAccessArgs) => boolean | Promise<boolean>
 
 /**
  * Evaluates multiple access functions asynchronously and combines their results.
@@ -26,7 +26,7 @@ const evalAccessFunctions = async (
 /**
  * Adapts an access function to automatically return the appropriate type based on the context.
  */
-export const field = (accessFn: AccessFunction): FieldAccessFunction => {
+export const boolean = (accessFn: AccessFunction): BooleanAccessFunction => {
   return async (args: ExtendedAccessArgs) => {
     const result = await accessFn(args)
     return typeof result === 'object' && result !== null ? true : !!result
