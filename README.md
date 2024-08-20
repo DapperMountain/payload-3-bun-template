@@ -9,7 +9,7 @@ To spin up the project locally, follow these steps:
 1. First clone the repo
 1. Then `cd YOUR_PROJECT_REPO && cp .env.example .env`
 1. Next `bun install && bun dev` (or `docker-compose up -d`, see [Docker](#docker))
-1. Run `bun run db:seed` to seed the database. see [src/database/seed](src/database/seed)
+1. Run `bun run db:seed:run` to seed the database. see [src/database/seed](src/database/seed)
 1. Now `open http://localhost:3001/admin` to access the admin panel
 1. Log in using one of the users defined during the database seed process
 

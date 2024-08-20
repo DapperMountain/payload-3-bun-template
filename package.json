@@ -10,7 +10,9 @@
     "devsafe": "rm -rf .next && NODE_OPTIONS=--no-deprecation next dev",
     "generate:types": "payload generate:types",
     "generate:graphql": "payload-graphql generate:schema",
-    "db:seed": "tsx ./src/database/seed",
+    "db:seed:run": "tsx ./src/database/seed",
+    "db:migrate:run": "bun run payload migrate",
+    "db:migrate:create": "bun run payload migrate:create",
     "lint": "NODE_OPTIONS=--no-deprecation next lint",
     "payload": "NODE_OPTIONS=--no-deprecation payload",
     "start": "NODE_OPTIONS=--no-deprecation next start"
