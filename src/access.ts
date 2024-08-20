@@ -1,10 +1,9 @@
 import { AccessArgs, Where, PayloadRequest } from 'payload'
 import { Role } from './payload.types'
 
-type ExtendedAccessArgs = AccessArgs<any> & { siblingData?: any }
 type AccessResult = Where | boolean
-type AccessFunction = (args: ExtendedAccessArgs) => AccessResult | Promise<AccessResult>
-type BooleanAccessFunction = (args: ExtendedAccessArgs) => boolean | Promise<boolean>
+type AccessFunction<T = Record<string, unknown>> = (args: AccessArgs<T>) => AccessResult | Promise<AccessResult>
+type BooleanAccessFunction<T = Record<string, unknown>> = (args: AccessArgs<T>) => boolean | Promise<boolean>
 
 /**
  * Evaluates multiple access functions asynchronously and combines their results.
@@ -14,9 +13,9 @@ type BooleanAccessFunction = (args: ExtendedAccessArgs) => boolean | Promise<boo
  * @param combineResults - Function that combines the results into a single result.
  * @returns The combined access result.
  */
-const evalAccessFunctions = async (
-  accessFns: AccessFunction[],
-  args: AccessArgs<any>,
+const evalAccessFunctions = async <T>(
+  accessFns: AccessFunction<T>[],
+  args: AccessArgs<T>,
   combineResults: (results: AccessResult[]) => AccessResult,
 ): Promise<AccessResult> => {
   const results = await Promise.all(accessFns.map((accessFn) => accessFn(args)))
@@ -26,8 +25,8 @@ const evalAccessFunctions = async (
 /**
  * Adapts an access function to automatically return the appropriate type based on the context.
  */
-export const boolean = (accessFn: AccessFunction): BooleanAccessFunction => {
-  return async (args: ExtendedAccessArgs) => {
+export const boolean = <T>(accessFn: AccessFunction<T>): BooleanAccessFunction<T> => {
+  return async (args: AccessArgs<T>) => {
     const result = await accessFn(args)
     return typeof result === 'object' && result !== null ? true : !!result
   }
@@ -38,8 +37,8 @@ export const boolean = (accessFn: AccessFunction): BooleanAccessFunction => {
  * return an object result or all to return true. Combines the results using the provided callback.
  */
 export const requireOne =
-  (...accessFns: AccessFunction[]): ((args: AccessArgs<any>) => Promise<AccessResult>) =>
-  async (args: AccessArgs<any>) =>
+  <T>(...accessFns: AccessFunction<T>[]): ((args: AccessArgs<T>) => Promise<AccessResult>) =>
+  async (args: AccessArgs<T>) =>
     evalAccessFunctions(
       accessFns,
       args,
@@ -51,8 +50,8 @@ export const requireOne =
  * true. Combines the results using the provided callback.
  */
 export const requireAll =
-  (...accessFns: AccessFunction[]): ((args: AccessArgs<any>) => Promise<AccessResult>) =>
-  async (args: AccessArgs<any>) =>
+  <T>(...accessFns: AccessFunction<T>[]): ((args: AccessArgs<T>) => Promise<AccessResult>) =>
+  async (args: AccessArgs<T>) =>
     evalAccessFunctions(accessFns, args, (results) =>
       results.every((result) => result === true) ? true : results.find((result) => typeof result === 'object') ?? false,
     )
