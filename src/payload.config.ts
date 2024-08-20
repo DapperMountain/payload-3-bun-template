@@ -5,6 +5,8 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { migrations } from './database/migrations'
+
 import Users from './collections/Users/users.schema'
 import Roles from './collections/Roles/roles.schema'
 
@@ -38,7 +40,8 @@ export default buildConfig({
   },
   db: postgresAdapter({
     idType: 'uuid',
-    migrationDir: './database/migrations',
+    migrationDir: './src/database/migrations',
+    prodMigrations: migrations, // Run migrations on init
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
