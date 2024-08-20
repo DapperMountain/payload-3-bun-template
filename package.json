@@ -18,17 +18,17 @@
     "start": "NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.0.0-beta.78",
-    "@payloadcms/next": "3.0.0-beta.78",
-    "@payloadcms/richtext-lexical": "3.0.0-beta.78",
+    "@payloadcms/db-postgres": "3.0.0-beta.87",
+    "@payloadcms/next": "3.0.0-beta.87",
+    "@payloadcms/richtext-lexical": "3.0.0-beta.87",
     "graphql": "16.9.0",
     "next": "15.0.0-canary.104",
-    "payload": "3.0.0-beta.78",
+    "payload": "3.0.0-beta.87",
     "react": "19.0.0-rc-06d0b89e-20240801",
     "react-dom": "19.0.0-rc-06d0b89e-20240801"
   },
   "devDependencies": {
-    "@payloadcms/graphql": "3.0.0-beta.78",
+    "@payloadcms/graphql": "3.0.0-beta.87",
     "@types/node": "^20.14.9",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
