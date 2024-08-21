@@ -10,7 +10,7 @@
     "devsafe": "rm -rf .next && NODE_OPTIONS=--no-deprecation next dev",
     "generate:types": "payload generate:types",
     "generate:graphql": "payload-graphql generate:schema",
-    "db:seed:run": "tsx ./src/database/seed",
+    "db:seed:run": "bun ./src/database/seed",
     "db:migrate:run": "bun run payload migrate",
     "db:migrate:create": "bun run payload migrate:create",
     "lint": "NODE_OPTIONS=--no-deprecation next lint",
@@ -36,7 +36,6 @@
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.0.0-canary.53",
-    "tsx": "^4.11.2",
     "typescript": "5.5.4",
     "@types/bun": "latest"
   },
