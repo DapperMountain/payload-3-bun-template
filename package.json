@@ -18,18 +18,18 @@
     "start": "NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.0.0-beta.87",
-    "@payloadcms/next": "3.0.0-beta.87",
-    "@payloadcms/richtext-lexical": "3.0.0-beta.87",
+    "@payloadcms/db-postgres": "3.0.0-beta.88",
+    "@payloadcms/next": "3.0.0-beta.88",
+    "@payloadcms/richtext-lexical": "3.0.0-beta.88",
     "babel-plugin-react-compiler": "0.0.0-experimental-592953e-20240517",
     "graphql": "16.9.0",
     "next": "15.0.0-canary.104",
-    "payload": "3.0.0-beta.87",
+    "payload": "3.0.0-beta.88",
     "react": "19.0.0-rc-06d0b89e-20240801",
     "react-dom": "19.0.0-rc-06d0b89e-20240801"
   },
   "devDependencies": {
-    "@payloadcms/graphql": "3.0.0-beta.87",
+    "@payloadcms/graphql": "3.0.0-beta.88",
     "@types/node": "^20.14.9",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
@@ -37,7 +37,8 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "15.0.0-canary.53",
     "tsx": "^4.11.2",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "@types/bun": "latest"
   },
   "engines": {
     "node": "^18.20.2 || >=20.6.0"
