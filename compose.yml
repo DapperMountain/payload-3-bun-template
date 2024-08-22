@@ -11,14 +11,14 @@ services:
     working_dir: /home/node/app/
     command: sh -c "bun install && bun dev"
     depends_on:
-      - postgres
+      - db
     env_file:
       - .env
 
-  postgres:
+  db:
     restart: unless-stopped
     image: postgres:16.2-alpine3.19
-    container_name: postgres
+    container_name: db
     healthcheck:
       test: ['CMD-SHELL', 'g_isready -U payload -d payload']
       interval: 5s
@@ -34,6 +34,27 @@ services:
       - 5442:5432
     volumes:
       - data:/var/lib/postgresql/data
+
+  db-test:
+    restart: unless-stopped
+    image: postgres:16.2-alpine3.19
+    container_name: db-test
+    healthcheck:
+      test: ['CMD-SHELL', 'g_isready -U payload -d payload']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-payload}
+      POSTGRES_USER: ${DATABASE_USER:-payload}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-payload}
+    ports:
+      - 5443:5432
+    volumes:
+      - data_test:/var/lib/postgresql/data
 volumes:
   data:
+  data_test:
   node_modules:

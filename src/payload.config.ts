@@ -15,6 +15,9 @@ const dirname = path.dirname(filename)
 
 dotenv.config()
 
+// Is it a test environment?
+const isTestEnv = process.env.NODE_ENV === 'test'
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -43,7 +46,7 @@ export default buildConfig({
     migrationDir: './src/database/migrations',
     prodMigrations: migrations, // Run migrations on init
     pool: {
-      connectionString: process.env.DATABASE_URI,
+      connectionString: process.env[!isTestEnv ? 'DATABASE_URI' : 'DATABASE_TEST_URI'],
     },
   }),
   telemetry: false,

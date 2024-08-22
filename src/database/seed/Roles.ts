@@ -1,5 +1,5 @@
 import { Payload } from 'payload'
-import type { Role } from '../../payload.types'
+import type { Role } from '@/payload.types'
 
 /**
  * Seeds roles into the database if they don't already exist.

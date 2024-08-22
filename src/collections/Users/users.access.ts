@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { boolean, isAdmin, isAdminOrSelf } from '../../access'
+import { boolean, isAdmin, isAdminOrSelf } from '@/access'
 
 /**
  * Defines access control for the collection.
