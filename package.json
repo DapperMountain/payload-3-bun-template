@@ -10,35 +10,41 @@
     "devsafe": "rm -rf .next && NODE_OPTIONS=--no-deprecation next dev",
     "generate:types": "payload generate:types",
     "generate:graphql": "payload-graphql generate:schema",
-    "db:seed:run": "bun ./src/database/seed",
     "db:seed:run": "tsx ./src/database/seed",
     "db:migrate:run": "bun run payload migrate",
     "db:migrate:create": "bun run payload migrate:create",
     "lint": "NODE_OPTIONS=--no-deprecation next lint",
+    "format": "prettier .",
     "payload": "NODE_OPTIONS=--no-deprecation payload",
-    "start": "NODE_OPTIONS=--no-deprecation next start"
+    "start": "NODE_OPTIONS=--no-deprecation next start",
+    "test": "NODE_ENV=test bun test --preload ./src/test/config.ts",
+    "prepare": "husky || true"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.0.0-beta.88",
-    "@payloadcms/next": "3.0.0-beta.88",
-    "@payloadcms/richtext-lexical": "3.0.0-beta.88",
+    "@payloadcms/db-postgres": "3.0.0-beta.90",
+    "@payloadcms/db-sqlite": "3.0.0-beta.90",
+    "@payloadcms/next": "3.0.0-beta.90",
+    "@payloadcms/richtext-lexical": "3.0.0-beta.90",
     "babel-plugin-react-compiler": "0.0.0-experimental-592953e-20240517",
     "graphql": "16.9.0",
     "next": "15.0.0-canary.104",
-    "payload": "3.0.0-beta.88",
+    "payload": "3.0.0-beta.90",
     "react": "19.0.0-rc-06d0b89e-20240801",
-    "react-dom": "19.0.0-rc-06d0b89e-20240801"
+    "react-dom": "19.0.0-rc-06d0b89e-20240801",
+    "tsx": "^4.17.0"
   },
   "devDependencies": {
-    "@payloadcms/graphql": "3.0.0-beta.88",
+    "@payloadcms/graphql": "3.0.0-beta.90",
+    "@types/bun": "latest",
     "@types/node": "^20.14.9",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.0.0-canary.53",
-    "typescript": "5.5.4",
-    "@types/bun": "latest"
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.9",
+    "typescript": "5.5.4"
   },
   "engines": {
     "node": "^18.20.2 || >=20.6.0"
