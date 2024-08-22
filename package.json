@@ -17,7 +17,7 @@
     "format": "prettier .",
     "payload": "NODE_OPTIONS=--no-deprecation payload",
     "start": "NODE_OPTIONS=--no-deprecation next start",
-    "test": "NODE_ENV=test bun test --preload ./src/test/config.ts",
+    "test": "bun test --preload ./src/test/config.ts",
     "prepare": "husky || true"
   },
   "dependencies": {

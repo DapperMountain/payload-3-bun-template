@@ -5,6 +5,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { isTestEnv } from '@/test/config'
 import { migrations } from './database/migrations'
 
 import Users from './collections/Users/users.schema'
@@ -14,9 +15,6 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 dotenv.config()
-
-// Is it a test environment?
-const isTestEnv = process.env.NODE_ENV === 'test'
 
 export default buildConfig({
   admin: {
@@ -46,7 +44,7 @@ export default buildConfig({
     migrationDir: './src/database/migrations',
     prodMigrations: migrations, // Run migrations on init
     pool: {
-      connectionString: process.env[!isTestEnv ? 'DATABASE_URI' : 'DATABASE_TEST_URI'],
+      connectionString: process.env[!isTestEnv() ? 'DATABASE_URI' : 'DATABASE_TEST_URI'],
     },
   }),
   telemetry: false,
