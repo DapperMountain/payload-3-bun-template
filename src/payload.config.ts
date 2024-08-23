@@ -5,14 +5,17 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { isTestEnv } from '@/test/config'
-import { migrations } from './database/migrations'
+import { migrations } from '@/database/migrations'
 
-import Users from './collections/Users/users.schema'
-import Roles from './collections/Roles/roles.schema'
+import Users from '@/collections/Users/users.schema'
+import Roles from '@/collections/Roles/roles.schema'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+export function isTestEnv() {
+  return process.env.NODE_ENV === 'test'
+}
 
 dotenv.config()
 
@@ -41,7 +44,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     idType: 'uuid',
-    migrationDir: './src/database/migrations',
+    migrationDir: path.resolve(dirname, 'src', 'database', 'migrations'),
     prodMigrations: migrations, // Run migrations on init
     pool: {
       connectionString: process.env[!isTestEnv() ? 'DATABASE_URI' : 'DATABASE_TEST_URI'],

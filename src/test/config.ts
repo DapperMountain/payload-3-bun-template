@@ -1,15 +1,11 @@
 import { beforeAll, afterAll } from 'bun:test'
 import { Payload, getPayload } from 'payload'
-import config from '@payload-config'
+import config, { isTestEnv } from '@payload-config'
 import { sql } from '@payloadcms/db-postgres'
 
 let payload: Payload
 
-function isTestEnv() {
-  return process.env.NODE_ENV === 'test'
-}
-
-function throwIfNotTestEnv() {
+export function throwIfNotTestEnv() {
   if (!isTestEnv()) throw Error('process.env.NODE_ENV needs to be set to `test`')
 }
 
@@ -44,4 +40,4 @@ afterAll(async () => {
   }
 })
 
-export { payload, isTestEnv }
+export { payload }
