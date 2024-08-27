@@ -49,10 +49,12 @@ scalar DateTime
 
 enum LocaleInputType {
   en
+  es
 }
 
 enum FallbackLocaleInputType {
   en
+  es
   none
 }
 

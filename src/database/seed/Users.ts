@@ -1,5 +1,5 @@
+import type { Role, User } from '@/types'
 import { Payload } from 'payload'
-import type { Role, User } from '@/payload.types'
 
 /**
  * Seeds users into the database if they don't already exist.
@@ -67,17 +67,16 @@ export default async function seed(payload: Payload): Promise<void> {
       await payload.create({
         collection: 'users',
         data: user as User,
-        locale: null,
         overrideAccess: true,
       })
 
       payload.logger.info(`✅  [Users] User "${user.email}" inserted successfully.`)
     } catch (error) {
-      if (error instanceof Error) {
-        payload.logger.error(`❌  [Users] Failed to insert user "${user.email}": ${error.message}`)
-      } else {
-        payload.logger.error(`❌  [Users] Failed to insert user "${user.email}": Unknown error occurred`)
-      }
+      payload.logger.error(
+        `❌  [Users] Failed to insert user "${user.email}": ${
+          error instanceof Error ? error.message : 'Unknown error occurred.'
+        }`,
+      )
     }
   }
 }

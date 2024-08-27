@@ -1,7 +1,8 @@
-import { beforeAll, afterAll, describe, it, expect } from 'bun:test'
 import { payload } from '@/test/config'
+import { Role } from '@/types'
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test'
 
-describe('Users', () => {
+describe('[Users]', () => {
   let roleId: string
 
   beforeAll(async () => {
@@ -35,7 +36,7 @@ describe('Users', () => {
     })
 
     // Extract role IDs from the response
-    const roleIds = response?.roles?.map((role: any) => role.id)
+    const roleIds = (response?.roles as Role[])?.map((role) => role.id)
 
     expect(response.email).toBe(userData.email)
     expect(response.firstName).toBe(userData.firstName)
@@ -56,7 +57,7 @@ describe('Users', () => {
     })
 
     // Extract role IDs from the response
-    const roleIds = response?.docs?.[0]?.roles?.map((role: any) => role.id)
+    const roleIds = (response?.docs?.[0]?.roles as Role[])?.map((role: Role) => role.id)
 
     expect(response.docs.length).toBeGreaterThan(0)
     expect(response.docs[0].email).toBe(userEmail)
@@ -96,7 +97,7 @@ describe('Users', () => {
     })
 
     // Extract role IDs from the response
-    const updatedRoleIds = response?.roles?.map((role: any) => role.id)
+    const updatedRoleIds = (response?.roles as Role[])?.map((role: Role) => role.id)
 
     expect(updatedRoleIds).toContain(updatedRoleId) // Verify the updated role association
   })

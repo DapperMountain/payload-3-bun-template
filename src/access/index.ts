@@ -1,5 +1,5 @@
-import { AccessArgs, Where, PayloadRequest } from 'payload'
-import { Role } from './payload.types'
+import { Role } from '@/types'
+import { AccessArgs, PayloadRequest, Where } from 'payload'
 
 type AccessResult = Where | boolean
 type AccessFunction<T = Record<string, unknown>> = (args: AccessArgs<T>) => AccessResult | Promise<AccessResult>

@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'bun:test'
 import { payload } from '@/test/config'
+import { describe, expect, it } from 'bun:test'
 
-describe('Roles', () => {
+describe('[Roles]', () => {
   it('should create a new role', async () => {
     const roleData = {
       name: 'Admin',

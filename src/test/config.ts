@@ -1,9 +1,14 @@
-import { beforeAll, afterAll } from 'bun:test'
-import { Payload, getPayload } from 'payload'
-import config, { isTestEnv } from '@payload-config'
+import config from '@config'
+import payloadConfig from '@payload-config'
 import { sql } from '@payloadcms/db-postgres'
+import { afterAll, beforeAll } from 'bun:test'
+import { Payload, getPayload } from 'payload'
 
 let payload: Payload
+
+export function isTestEnv() {
+  return config.env === 'test'
+}
 
 export function throwIfNotTestEnv() {
   if (!isTestEnv()) throw Error('process.env.NODE_ENV needs to be set to `test`')
@@ -14,7 +19,7 @@ beforeAll(async () => {
   throwIfNotTestEnv()
 
   try {
-    payload = await getPayload({ config })
+    payload = await getPayload({ config: payloadConfig })
   } catch (error) {
     console.error('Error during setup:', error)
     throw error // Re-throw to fail the test if necessary
@@ -32,7 +37,7 @@ afterAll(async () => {
         WHERE schemaname = 'public';
       `)
 
-  const tables: string[] = result.rows.map((row) => row.tablename as string)
+  const tables: string[] = result.rows.map((row: { tablename: string }) => row.tablename as string)
 
   // Truncate each table except the migration table
   for (const table of tables) {

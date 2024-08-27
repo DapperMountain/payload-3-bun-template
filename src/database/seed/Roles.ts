@@ -1,5 +1,5 @@
+import type { Role } from '@/types'
 import { Payload } from 'payload'
-import type { Role } from '@/payload.types'
 
 /**
  * Seeds roles into the database if they don't already exist.
@@ -49,17 +49,16 @@ export default async function seed(payload: Payload): Promise<void> {
       await payload.create({
         collection: 'roles',
         data: role as Role,
-        locale: null,
         overrideAccess: true,
       })
 
       payload.logger.info(`✅  [Roles] Role "${role.name}" inserted successfully.`)
     } catch (error) {
-      if (error instanceof Error) {
-        payload.logger.error(`❌  [Roles] Failed to insert role "${role.name}": ${error.message}`)
-      } else {
-        payload.logger.error(`❌  [Roles] Failed to insert role "${role.name}": Unknown error occurred`)
-      }
+      payload.logger.error(
+        `❌  [Roles] Failed to insert role "${role.name}": ${
+          error instanceof Error ? error.message : 'Unknown error occurred.'
+        }`,
+      )
     }
   }
 }

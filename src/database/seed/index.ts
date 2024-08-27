@@ -1,5 +1,5 @@
+import payloadConfig from '@payload-config'
 import { getPayload } from 'payload'
-import config from '@payload-config'
 import addRoles from './Roles'
 import addUsers from './Users'
 
@@ -7,7 +7,7 @@ import addUsers from './Users'
  * Seeds the database, in order
  */
 async function seed(): Promise<void> {
-  const payload = await getPayload({ config })
+  const payload = await getPayload({ config: payloadConfig })
 
   const seeders = [
     { name: 'Roles', seedFunction: addRoles },
@@ -20,7 +20,9 @@ async function seed(): Promise<void> {
       await seedFunction(payload)
       payload.logger.info(`✅  [${name}] Seeding complete.`)
     } catch (error) {
-      payload.logger.error(`❌  [${name}] Seeding failed: ${error.message}`)
+      payload.logger.error(
+        `❌  [${name}] Seeding failed: ${error instanceof Error ? error.message : 'Unknown error occurred.'}`,
+      )
     }
   }
 

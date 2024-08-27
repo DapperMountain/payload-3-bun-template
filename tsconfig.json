@@ -20,10 +20,12 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@config": ["./config/index.ts"],
+      "@config/*": ["./config/*"],
       "@payload-config": ["./src/payload.config.ts"]
     },
     "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["**/*.ts", "**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

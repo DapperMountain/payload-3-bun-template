@@ -20,7 +20,7 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {};
-  locale: 'en';
+  locale: 'en' | 'es';
   user: User & {
     collection: 'users';
   };

@@ -1,43 +1,34 @@
-import path from 'path'
-import dotenv from 'dotenv'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import dotenv from 'dotenv'
+import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { migrations } from '@/database/migrations'
 
+import collections from '@/collections'
+import { i18n, localization } from '@/lang'
+
 import Users from '@/collections/Users/users.schema'
-import Roles from '@/collections/Roles/roles.schema'
+import config from '@config'
+
+dotenv.config()
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-
-export function isTestEnv() {
-  return process.env.NODE_ENV === 'test'
-}
-
-dotenv.config()
 
 export default buildConfig({
   admin: {
     user: Users.slug,
   },
-  collections: [Users, Roles],
-  localization: {
-    locales: [
-      {
-        label: 'English',
-        code: 'en',
-      },
-    ],
-    defaultLocale: 'en',
-    fallback: true,
-  },
+  collections,
+  i18n,
+  localization,
   editor: lexicalEditor({}),
-  secret: process.env.PAYLOAD_SECRET ?? '',
+  secret: config.payload.secret ?? '',
   typescript: {
-    outputFile: path.resolve(dirname, 'payload.types.ts'),
+    outputFile: path.resolve(dirname, 'types.ts'),
   },
   graphQL: {
     schemaOutputFile: path.resolve(dirname, 'schema.graphql'),
@@ -47,7 +38,7 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'src', 'database', 'migrations'),
     prodMigrations: migrations, // Run migrations on init
     pool: {
-      connectionString: process.env[!isTestEnv() ? 'DATABASE_URI' : 'DATABASE_TEST_URI'],
+      connectionString: config.database.uri,
     },
   }),
   telemetry: false,

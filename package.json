@@ -10,6 +10,7 @@
     "devsafe": "rm -rf .next && NODE_OPTIONS=--no-deprecation next dev",
     "generate:types": "payload generate:types",
     "generate:graphql": "payload-graphql generate:schema",
+    "generate:importMap": "payload generate:importMap",
     "db:seed:run": "tsx ./src/database/seed",
     "db:migrate:run": "bun run payload migrate",
     "db:migrate:create": "bun run payload migrate:create",
@@ -21,20 +22,21 @@
     "prepare": "husky || true"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.0.0-beta.90",
-    "@payloadcms/db-sqlite": "3.0.0-beta.90",
-    "@payloadcms/next": "3.0.0-beta.90",
-    "@payloadcms/richtext-lexical": "3.0.0-beta.90",
-    "babel-plugin-react-compiler": "0.0.0-experimental-592953e-20240517",
+    "@payloadcms/db-postgres": "3.0.0-beta.91",
+    "@payloadcms/db-sqlite": "3.0.0-beta.91",
+    "@payloadcms/next": "3.0.0-beta.91",
+    "@payloadcms/richtext-lexical": "3.0.0-beta.91",
+    "babel-plugin-react-compiler": "0.0.0-experimental-9e9694c-20240826",
     "graphql": "16.9.0",
     "next": "15.0.0-canary.104",
-    "payload": "3.0.0-beta.90",
+    "payload": "3.0.0-beta.91",
     "react": "19.0.0-rc-06d0b89e-20240801",
     "react-dom": "19.0.0-rc-06d0b89e-20240801",
-    "tsx": "^4.17.0"
+    "tsx": "^4.17.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@payloadcms/graphql": "3.0.0-beta.90",
+    "@payloadcms/graphql": "3.0.0-beta.91",
     "@types/bun": "latest",
     "@types/node": "^20.14.9",
     "@types/react": "npm:types-react@19.0.0-rc.0",

@@ -1,7 +1,7 @@
+import { boolean, isAdmin } from '@/access'
 import { CollectionConfig } from 'payload'
 import { access } from './users.access'
 import { hooks } from './users.hooks'
-import { boolean, isAdmin } from '@/access'
 
 const Users: CollectionConfig = {
   slug: 'users',
