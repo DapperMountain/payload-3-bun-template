@@ -26,7 +26,7 @@ export default buildConfig({
   i18n,
   localization,
   editor: lexicalEditor({}),
-  secret: config.payload.secret ?? '',
+  secret: config.payload.secret,
   typescript: {
     outputFile: path.resolve(rootDir, 'src', 'types.ts'),
   },
