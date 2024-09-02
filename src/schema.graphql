@@ -9,6 +9,10 @@ type Query {
   Roles(draft: Boolean, where: Role_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): Roles
   countRoles(draft: Boolean, where: Role_where, locale: LocaleInputType): countRoles
   docAccessRole(id: String!): rolesDocAccess
+  Tenant(id: String!, draft: Boolean, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType): Tenant
+  Tenants(draft: Boolean, where: Tenant_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): Tenants
+  countTenants(draft: Boolean, where: Tenant_where, locale: LocaleInputType): countTenants
+  docAccessTenant(id: String!): tenantsDocAccess
   PayloadPreference(id: String!, draft: Boolean, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType): PayloadPreference
   PayloadPreferences(draft: Boolean, where: PayloadPreference_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): PayloadPreferences
   countPayloadPreferences(draft: Boolean, where: PayloadPreference_where, locale: LocaleInputType): countPayloadPreferences
@@ -22,8 +26,12 @@ type User {
   lastName: String!
   fullName: String
   roles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Role!]
+  tenants: [User_Tenants!]
   updatedAt: DateTime
   createdAt: DateTime
+  enableAPIKey: Boolean
+  apiKey: String
+  apiKeyIndex: String
   email: EmailAddress!
   resetPasswordToken: String
   resetPasswordExpiration: DateTime
@@ -38,8 +46,14 @@ type Role {
   id: String
   name: String!
   description: String!
+  type: Role_type!
   updatedAt: DateTime
   createdAt: DateTime
+}
+
+enum Role_type {
+  system
+  tenant
 }
 
 """
@@ -56,6 +70,20 @@ enum FallbackLocaleInputType {
   en
   es
   none
+}
+
+type User_Tenants {
+  tenant(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Tenant
+  roles(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Role!]
+  id: String
+}
+
+type Tenant {
+  id: String
+  name: String!
+  description: String!
+  updatedAt: DateTime
+  createdAt: DateTime
 }
 
 """
@@ -82,8 +110,13 @@ input User_where {
   lastName: User_lastName_operator
   fullName: User_fullName_operator
   roles: User_roles_operator
+  tenants__tenant: User_tenants__tenant_operator
+  tenants__roles: User_tenants__roles_operator
+  tenants__id: User_tenants__id_operator
   updatedAt: User_updatedAt_operator
   createdAt: User_createdAt_operator
+  enableAPIKey: User_enableAPIKey_operator
+  apiKey: User_apiKey_operator
   email: User_email_operator
   id: User_id_operator
   AND: [User_where_and]
@@ -127,13 +160,39 @@ input User_roles_operator {
   in: [JSON]
   not_in: [JSON]
   all: [JSON]
-  exists: Boolean
 }
 
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input User_tenants__tenant_operator {
+  equals: JSON
+  not_equals: JSON
+  in: [JSON]
+  not_in: [JSON]
+  all: [JSON]
+}
+
+input User_tenants__roles_operator {
+  equals: JSON
+  not_equals: JSON
+  in: [JSON]
+  not_in: [JSON]
+  all: [JSON]
+}
+
+input User_tenants__id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
 
 input User_updatedAt_operator {
   equals: DateTime
@@ -154,6 +213,23 @@ input User_createdAt_operator {
   less_than_equal: DateTime
   less_than: DateTime
   like: DateTime
+  exists: Boolean
+}
+
+input User_enableAPIKey_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input User_apiKey_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
   exists: Boolean
 }
 
@@ -183,8 +259,13 @@ input User_where_and {
   lastName: User_lastName_operator
   fullName: User_fullName_operator
   roles: User_roles_operator
+  tenants__tenant: User_tenants__tenant_operator
+  tenants__roles: User_tenants__roles_operator
+  tenants__id: User_tenants__id_operator
   updatedAt: User_updatedAt_operator
   createdAt: User_createdAt_operator
+  enableAPIKey: User_enableAPIKey_operator
+  apiKey: User_apiKey_operator
   email: User_email_operator
   id: User_id_operator
   AND: [User_where_and]
@@ -196,8 +277,13 @@ input User_where_or {
   lastName: User_lastName_operator
   fullName: User_fullName_operator
   roles: User_roles_operator
+  tenants__tenant: User_tenants__tenant_operator
+  tenants__roles: User_tenants__roles_operator
+  tenants__id: User_tenants__id_operator
   updatedAt: User_updatedAt_operator
   createdAt: User_createdAt_operator
+  enableAPIKey: User_enableAPIKey_operator
+  apiKey: User_apiKey_operator
   email: User_email_operator
   id: User_id_operator
   AND: [User_where_and]
@@ -222,8 +308,11 @@ type UsersDocAccessFields {
   lastName: UsersDocAccessFields_lastName
   fullName: UsersDocAccessFields_fullName
   roles: UsersDocAccessFields_roles
+  tenants: UsersDocAccessFields_tenants
   updatedAt: UsersDocAccessFields_updatedAt
   createdAt: UsersDocAccessFields_createdAt
+  enableAPIKey: UsersDocAccessFields_enableAPIKey
+  apiKey: UsersDocAccessFields_apiKey
   email: UsersDocAccessFields_email
   password: UsersDocAccessFields_password
 }
@@ -320,6 +409,105 @@ type UsersDocAccessFields_roles_Delete {
   permission: Boolean!
 }
 
+type UsersDocAccessFields_tenants {
+  create: UsersDocAccessFields_tenants_Create
+  read: UsersDocAccessFields_tenants_Read
+  update: UsersDocAccessFields_tenants_Update
+  delete: UsersDocAccessFields_tenants_Delete
+  fields: UsersDocAccessFields_tenants_Fields
+}
+
+type UsersDocAccessFields_tenants_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_Fields {
+  tenant: UsersDocAccessFields_tenants_tenant
+  roles: UsersDocAccessFields_tenants_roles
+  id: UsersDocAccessFields_tenants_id
+}
+
+type UsersDocAccessFields_tenants_tenant {
+  create: UsersDocAccessFields_tenants_tenant_Create
+  read: UsersDocAccessFields_tenants_tenant_Read
+  update: UsersDocAccessFields_tenants_tenant_Update
+  delete: UsersDocAccessFields_tenants_tenant_Delete
+}
+
+type UsersDocAccessFields_tenants_tenant_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_tenant_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_tenant_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_tenant_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_roles {
+  create: UsersDocAccessFields_tenants_roles_Create
+  read: UsersDocAccessFields_tenants_roles_Read
+  update: UsersDocAccessFields_tenants_roles_Update
+  delete: UsersDocAccessFields_tenants_roles_Delete
+}
+
+type UsersDocAccessFields_tenants_roles_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_roles_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_roles_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_roles_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_id {
+  create: UsersDocAccessFields_tenants_id_Create
+  read: UsersDocAccessFields_tenants_id_Read
+  update: UsersDocAccessFields_tenants_id_Update
+  delete: UsersDocAccessFields_tenants_id_Delete
+}
+
+type UsersDocAccessFields_tenants_id_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_id_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_id_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_tenants_id_Delete {
+  permission: Boolean!
+}
+
 type UsersDocAccessFields_updatedAt {
   create: UsersDocAccessFields_updatedAt_Create
   read: UsersDocAccessFields_updatedAt_Read
@@ -363,6 +551,52 @@ type UsersDocAccessFields_createdAt_Update {
 }
 
 type UsersDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_enableAPIKey {
+  create: UsersDocAccessFields_enableAPIKey_Create
+  read: UsersDocAccessFields_enableAPIKey_Read
+  update: UsersDocAccessFields_enableAPIKey_Update
+  delete: UsersDocAccessFields_enableAPIKey_Delete
+}
+
+type UsersDocAccessFields_enableAPIKey_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_enableAPIKey_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_enableAPIKey_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_enableAPIKey_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_apiKey {
+  create: UsersDocAccessFields_apiKey_Create
+  read: UsersDocAccessFields_apiKey_Read
+  update: UsersDocAccessFields_apiKey_Update
+  delete: UsersDocAccessFields_apiKey_Delete
+}
+
+type UsersDocAccessFields_apiKey_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_apiKey_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_apiKey_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_apiKey_Delete {
   permission: Boolean!
 }
 
@@ -467,6 +701,7 @@ type Roles {
 input Role_where {
   name: Role_name_operator
   description: Role_description_operator
+  type: Role_type_operator
   updatedAt: Role_updatedAt_operator
   createdAt: Role_createdAt_operator
   id: Role_id_operator
@@ -492,6 +727,19 @@ input Role_description_operator {
   in: [String]
   not_in: [String]
   all: [String]
+}
+
+input Role_type_operator {
+  equals: Role_type_Input
+  not_equals: Role_type_Input
+  in: [Role_type_Input]
+  not_in: [Role_type_Input]
+  all: [Role_type_Input]
+}
+
+enum Role_type_Input {
+  system
+  tenant
 }
 
 input Role_updatedAt_operator {
@@ -530,6 +778,7 @@ input Role_id_operator {
 input Role_where_and {
   name: Role_name_operator
   description: Role_description_operator
+  type: Role_type_operator
   updatedAt: Role_updatedAt_operator
   createdAt: Role_createdAt_operator
   id: Role_id_operator
@@ -540,6 +789,7 @@ input Role_where_and {
 input Role_where_or {
   name: Role_name_operator
   description: Role_description_operator
+  type: Role_type_operator
   updatedAt: Role_updatedAt_operator
   createdAt: Role_createdAt_operator
   id: Role_id_operator
@@ -562,6 +812,7 @@ type rolesDocAccess {
 type RolesDocAccessFields {
   name: RolesDocAccessFields_name
   description: RolesDocAccessFields_description
+  type: RolesDocAccessFields_type
   updatedAt: RolesDocAccessFields_updatedAt
   createdAt: RolesDocAccessFields_createdAt
 }
@@ -609,6 +860,29 @@ type RolesDocAccessFields_description_Update {
 }
 
 type RolesDocAccessFields_description_Delete {
+  permission: Boolean!
+}
+
+type RolesDocAccessFields_type {
+  create: RolesDocAccessFields_type_Create
+  read: RolesDocAccessFields_type_Read
+  update: RolesDocAccessFields_type_Update
+  delete: RolesDocAccessFields_type_Delete
+}
+
+type RolesDocAccessFields_type_Create {
+  permission: Boolean!
+}
+
+type RolesDocAccessFields_type_Read {
+  permission: Boolean!
+}
+
+type RolesDocAccessFields_type_Update {
+  permission: Boolean!
+}
+
+type RolesDocAccessFields_type_Delete {
   permission: Boolean!
 }
 
@@ -674,6 +948,231 @@ type RolesUpdateDocAccess {
 }
 
 type RolesDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Tenants {
+  docs: [Tenant]
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  limit: Int
+  nextPage: Int
+  offset: Int
+  page: Int
+  pagingCounter: Int
+  prevPage: Int
+  totalDocs: Int
+  totalPages: Int
+}
+
+input Tenant_where {
+  name: Tenant_name_operator
+  description: Tenant_description_operator
+  updatedAt: Tenant_updatedAt_operator
+  createdAt: Tenant_createdAt_operator
+  id: Tenant_id_operator
+  AND: [Tenant_where_and]
+  OR: [Tenant_where_or]
+}
+
+input Tenant_name_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input Tenant_description_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+}
+
+input Tenant_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input Tenant_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input Tenant_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Tenant_where_and {
+  name: Tenant_name_operator
+  description: Tenant_description_operator
+  updatedAt: Tenant_updatedAt_operator
+  createdAt: Tenant_createdAt_operator
+  id: Tenant_id_operator
+  AND: [Tenant_where_and]
+  OR: [Tenant_where_or]
+}
+
+input Tenant_where_or {
+  name: Tenant_name_operator
+  description: Tenant_description_operator
+  updatedAt: Tenant_updatedAt_operator
+  createdAt: Tenant_createdAt_operator
+  id: Tenant_id_operator
+  AND: [Tenant_where_and]
+  OR: [Tenant_where_or]
+}
+
+type countTenants {
+  totalDocs: Int
+}
+
+type tenantsDocAccess {
+  fields: TenantsDocAccessFields
+  create: TenantsCreateDocAccess
+  read: TenantsReadDocAccess
+  update: TenantsUpdateDocAccess
+  delete: TenantsDeleteDocAccess
+}
+
+type TenantsDocAccessFields {
+  name: TenantsDocAccessFields_name
+  description: TenantsDocAccessFields_description
+  updatedAt: TenantsDocAccessFields_updatedAt
+  createdAt: TenantsDocAccessFields_createdAt
+}
+
+type TenantsDocAccessFields_name {
+  create: TenantsDocAccessFields_name_Create
+  read: TenantsDocAccessFields_name_Read
+  update: TenantsDocAccessFields_name_Update
+  delete: TenantsDocAccessFields_name_Delete
+}
+
+type TenantsDocAccessFields_name_Create {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_name_Read {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_name_Update {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_name_Delete {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_description {
+  create: TenantsDocAccessFields_description_Create
+  read: TenantsDocAccessFields_description_Read
+  update: TenantsDocAccessFields_description_Update
+  delete: TenantsDocAccessFields_description_Delete
+}
+
+type TenantsDocAccessFields_description_Create {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_description_Read {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_description_Update {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_description_Delete {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_updatedAt {
+  create: TenantsDocAccessFields_updatedAt_Create
+  read: TenantsDocAccessFields_updatedAt_Read
+  update: TenantsDocAccessFields_updatedAt_Update
+  delete: TenantsDocAccessFields_updatedAt_Delete
+}
+
+type TenantsDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_createdAt {
+  create: TenantsDocAccessFields_createdAt_Create
+  read: TenantsDocAccessFields_createdAt_Read
+  update: TenantsDocAccessFields_createdAt_Update
+  delete: TenantsDocAccessFields_createdAt_Delete
+}
+
+type TenantsDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type TenantsDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type TenantsCreateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsUpdateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsDeleteDocAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -967,6 +1466,7 @@ type Access {
   canAccessAdmin: Boolean!
   users: usersAccess
   roles: rolesAccess
+  tenants: tenantsAccess
   payload_preferences: payload_preferencesAccess
 }
 
@@ -984,8 +1484,11 @@ type UsersFields {
   lastName: UsersFields_lastName
   fullName: UsersFields_fullName
   roles: UsersFields_roles
+  tenants: UsersFields_tenants
   updatedAt: UsersFields_updatedAt
   createdAt: UsersFields_createdAt
+  enableAPIKey: UsersFields_enableAPIKey
+  apiKey: UsersFields_apiKey
   email: UsersFields_email
   password: UsersFields_password
 }
@@ -1082,6 +1585,105 @@ type UsersFields_roles_Delete {
   permission: Boolean!
 }
 
+type UsersFields_tenants {
+  create: UsersFields_tenants_Create
+  read: UsersFields_tenants_Read
+  update: UsersFields_tenants_Update
+  delete: UsersFields_tenants_Delete
+  fields: UsersFields_tenants_Fields
+}
+
+type UsersFields_tenants_Create {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_Read {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_Update {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_Fields {
+  tenant: UsersFields_tenants_tenant
+  roles: UsersFields_tenants_roles
+  id: UsersFields_tenants_id
+}
+
+type UsersFields_tenants_tenant {
+  create: UsersFields_tenants_tenant_Create
+  read: UsersFields_tenants_tenant_Read
+  update: UsersFields_tenants_tenant_Update
+  delete: UsersFields_tenants_tenant_Delete
+}
+
+type UsersFields_tenants_tenant_Create {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_tenant_Read {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_tenant_Update {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_tenant_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_roles {
+  create: UsersFields_tenants_roles_Create
+  read: UsersFields_tenants_roles_Read
+  update: UsersFields_tenants_roles_Update
+  delete: UsersFields_tenants_roles_Delete
+}
+
+type UsersFields_tenants_roles_Create {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_roles_Read {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_roles_Update {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_roles_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_id {
+  create: UsersFields_tenants_id_Create
+  read: UsersFields_tenants_id_Read
+  update: UsersFields_tenants_id_Update
+  delete: UsersFields_tenants_id_Delete
+}
+
+type UsersFields_tenants_id_Create {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_id_Read {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_id_Update {
+  permission: Boolean!
+}
+
+type UsersFields_tenants_id_Delete {
+  permission: Boolean!
+}
+
 type UsersFields_updatedAt {
   create: UsersFields_updatedAt_Create
   read: UsersFields_updatedAt_Read
@@ -1125,6 +1727,52 @@ type UsersFields_createdAt_Update {
 }
 
 type UsersFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_enableAPIKey {
+  create: UsersFields_enableAPIKey_Create
+  read: UsersFields_enableAPIKey_Read
+  update: UsersFields_enableAPIKey_Update
+  delete: UsersFields_enableAPIKey_Delete
+}
+
+type UsersFields_enableAPIKey_Create {
+  permission: Boolean!
+}
+
+type UsersFields_enableAPIKey_Read {
+  permission: Boolean!
+}
+
+type UsersFields_enableAPIKey_Update {
+  permission: Boolean!
+}
+
+type UsersFields_enableAPIKey_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_apiKey {
+  create: UsersFields_apiKey_Create
+  read: UsersFields_apiKey_Read
+  update: UsersFields_apiKey_Update
+  delete: UsersFields_apiKey_Delete
+}
+
+type UsersFields_apiKey_Create {
+  permission: Boolean!
+}
+
+type UsersFields_apiKey_Read {
+  permission: Boolean!
+}
+
+type UsersFields_apiKey_Update {
+  permission: Boolean!
+}
+
+type UsersFields_apiKey_Delete {
   permission: Boolean!
 }
 
@@ -1210,6 +1858,7 @@ type rolesAccess {
 type RolesFields {
   name: RolesFields_name
   description: RolesFields_description
+  type: RolesFields_type
   updatedAt: RolesFields_updatedAt
   createdAt: RolesFields_createdAt
 }
@@ -1257,6 +1906,29 @@ type RolesFields_description_Update {
 }
 
 type RolesFields_description_Delete {
+  permission: Boolean!
+}
+
+type RolesFields_type {
+  create: RolesFields_type_Create
+  read: RolesFields_type_Read
+  update: RolesFields_type_Update
+  delete: RolesFields_type_Delete
+}
+
+type RolesFields_type_Create {
+  permission: Boolean!
+}
+
+type RolesFields_type_Read {
+  permission: Boolean!
+}
+
+type RolesFields_type_Update {
+  permission: Boolean!
+}
+
+type RolesFields_type_Delete {
   permission: Boolean!
 }
 
@@ -1322,6 +1994,133 @@ type RolesUpdateAccess {
 }
 
 type RolesDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type tenantsAccess {
+  fields: TenantsFields
+  create: TenantsCreateAccess
+  read: TenantsReadAccess
+  update: TenantsUpdateAccess
+  delete: TenantsDeleteAccess
+}
+
+type TenantsFields {
+  name: TenantsFields_name
+  description: TenantsFields_description
+  updatedAt: TenantsFields_updatedAt
+  createdAt: TenantsFields_createdAt
+}
+
+type TenantsFields_name {
+  create: TenantsFields_name_Create
+  read: TenantsFields_name_Read
+  update: TenantsFields_name_Update
+  delete: TenantsFields_name_Delete
+}
+
+type TenantsFields_name_Create {
+  permission: Boolean!
+}
+
+type TenantsFields_name_Read {
+  permission: Boolean!
+}
+
+type TenantsFields_name_Update {
+  permission: Boolean!
+}
+
+type TenantsFields_name_Delete {
+  permission: Boolean!
+}
+
+type TenantsFields_description {
+  create: TenantsFields_description_Create
+  read: TenantsFields_description_Read
+  update: TenantsFields_description_Update
+  delete: TenantsFields_description_Delete
+}
+
+type TenantsFields_description_Create {
+  permission: Boolean!
+}
+
+type TenantsFields_description_Read {
+  permission: Boolean!
+}
+
+type TenantsFields_description_Update {
+  permission: Boolean!
+}
+
+type TenantsFields_description_Delete {
+  permission: Boolean!
+}
+
+type TenantsFields_updatedAt {
+  create: TenantsFields_updatedAt_Create
+  read: TenantsFields_updatedAt_Read
+  update: TenantsFields_updatedAt_Update
+  delete: TenantsFields_updatedAt_Delete
+}
+
+type TenantsFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type TenantsFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type TenantsFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type TenantsFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type TenantsFields_createdAt {
+  create: TenantsFields_createdAt_Create
+  read: TenantsFields_createdAt_Read
+  update: TenantsFields_createdAt_Update
+  delete: TenantsFields_createdAt_Delete
+}
+
+type TenantsFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type TenantsFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type TenantsFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type TenantsFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type TenantsCreateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type TenantsDeleteAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -1492,6 +2291,10 @@ type Mutation {
   updateRole(id: String!, autosave: Boolean, data: mutationRoleUpdateInput!, draft: Boolean, locale: LocaleInputType): Role
   deleteRole(id: String!): Role
   duplicateRole(id: String!): Role
+  createTenant(data: mutationTenantInput!, draft: Boolean, locale: LocaleInputType): Tenant
+  updateTenant(id: String!, autosave: Boolean, data: mutationTenantUpdateInput!, draft: Boolean, locale: LocaleInputType): Tenant
+  deleteTenant(id: String!): Tenant
+  duplicateTenant(id: String!): Tenant
   createPayloadPreference(data: mutationPayloadPreferenceInput!, draft: Boolean, locale: LocaleInputType): PayloadPreference
   updatePayloadPreference(id: String!, autosave: Boolean, data: mutationPayloadPreferenceUpdateInput!, draft: Boolean, locale: LocaleInputType): PayloadPreference
   deletePayloadPreference(id: String!): PayloadPreference
@@ -1503,8 +2306,12 @@ input mutationUserInput {
   lastName: String!
   fullName: String
   roles: [String]
+  tenants: [mutationUser_TenantsInput]
   updatedAt: String
   createdAt: String
+  enableAPIKey: Boolean
+  apiKey: String
+  apiKeyIndex: String
   email: String!
   resetPasswordToken: String
   resetPasswordExpiration: String
@@ -1515,13 +2322,23 @@ input mutationUserInput {
   password: String!
 }
 
+input mutationUser_TenantsInput {
+  tenant: String
+  roles: [String]
+  id: String
+}
+
 input mutationUserUpdateInput {
   firstName: String
   lastName: String
   fullName: String
   roles: [String]
+  tenants: [mutationUserUpdate_TenantsInput]
   updatedAt: String
   createdAt: String
+  enableAPIKey: Boolean
+  apiKey: String
+  apiKeyIndex: String
   email: String
   resetPasswordToken: String
   resetPasswordExpiration: String
@@ -1530,6 +2347,12 @@ input mutationUserUpdateInput {
   loginAttempts: Float
   lockUntil: String
   password: String
+}
+
+input mutationUserUpdate_TenantsInput {
+  tenant: String
+  roles: [String]
+  id: String
 }
 
 type usersRefreshedUser {
@@ -1558,11 +2381,37 @@ type usersResetPassword {
 input mutationRoleInput {
   name: String!
   description: String!
+  type: Role_type_MutationInput!
   updatedAt: String
   createdAt: String
 }
 
+enum Role_type_MutationInput {
+  system
+  tenant
+}
+
 input mutationRoleUpdateInput {
+  name: String
+  description: String
+  type: RoleUpdate_type_MutationInput
+  updatedAt: String
+  createdAt: String
+}
+
+enum RoleUpdate_type_MutationInput {
+  system
+  tenant
+}
+
+input mutationTenantInput {
+  name: String!
+  description: String!
+  updatedAt: String
+  createdAt: String
+}
+
+input mutationTenantUpdateInput {
   name: String
   description: String
   updatedAt: String

@@ -16,7 +16,7 @@ import config from '@config'
 dotenv.config()
 
 const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const rootDir = path.resolve(path.dirname(filename), '..')
 
 export default buildConfig({
   admin: {
@@ -28,14 +28,14 @@ export default buildConfig({
   editor: lexicalEditor({}),
   secret: config.payload.secret ?? '',
   typescript: {
-    outputFile: path.resolve(dirname, 'types.ts'),
+    outputFile: path.resolve(rootDir, 'src', 'types.ts'),
   },
   graphQL: {
-    schemaOutputFile: path.resolve(dirname, 'schema.graphql'),
+    schemaOutputFile: path.resolve(rootDir, 'src', 'schema.graphql'),
   },
   db: postgresAdapter({
     idType: 'uuid',
-    migrationDir: path.resolve(dirname, 'src', 'database', 'migrations'),
+    migrationDir: path.resolve(rootDir, 'src', 'database', 'migrations'),
     prodMigrations: migrations, // Run migrations on init
     pool: {
       connectionString: config.database.uri,

@@ -1,50 +1,90 @@
 import { payload } from '@/test/config'
-import { Role } from '@/types'
-import { afterAll, beforeAll, describe, expect, it } from 'bun:test'
+import { Role, Tenant, User } from '@/types'
+import { beforeAll, describe, expect, it } from 'bun:test'
 
 describe('[Users]', () => {
-  let roleId: string
+  let systemRoleId: string
+  let tenantRoleId: string
+  let tenantId: string
 
   beforeAll(async () => {
-    // Create a role to associate with the user
-    const roleData = {
-      name: 'Admin',
-      description: 'Administrator role',
+    // Create a tenant
+    const tenantData = {
+      name: 'Test Tenant',
+      description: 'Tenant for testing',
     }
 
-    const roleResponse = await payload.create({
-      collection: 'roles',
-      data: roleData,
+    const tenantResponse = await payload.create({
+      collection: 'tenants',
+      data: tenantData,
     })
 
-    roleId = roleResponse.id // Store the role ID for later use
-    expect(typeof roleId).toBe('string') // Validate that roleId is a string
+    tenantId = tenantResponse.id as string
+    expect(typeof tenantId).toBe('string')
+
+    // Create a system role
+    const systemRoleData = {
+      name: 'User',
+      description: 'Standard user role',
+      type: 'system' as const,
+    }
+
+    const systemRoleResponse = await payload.create({
+      collection: 'roles',
+      data: systemRoleData,
+    })
+
+    systemRoleId = systemRoleResponse.id as string
+    expect(typeof systemRoleId).toBe('string')
+
+    // Create a tenant role
+    const tenantRoleData = {
+      name: 'Tenant Admin',
+      description: 'Administrator role for a tenant',
+      type: 'tenant' as const,
+    }
+
+    const tenantRoleResponse = await payload.create({
+      collection: 'roles',
+      data: tenantRoleData,
+    })
+
+    tenantRoleId = tenantRoleResponse.id as string
+    expect(typeof tenantRoleId).toBe('string')
   })
 
-  it('should create a new user with a role', async () => {
+  it('should create a new user with a system role and tenant role', async () => {
     const userData = {
       email: 'testuser@example.com',
       password: 'password123',
       firstName: 'Test',
       lastName: 'User',
-      roles: [roleId], // Associate the user with the created role
+      roles: [systemRoleId], // System role assigned directly
+      tenants: [
+        {
+          tenant: tenantId,
+          roles: [tenantRoleId], // Tenant role assigned within the tenant array
+        },
+      ],
     }
 
-    const response = await payload.create({
+    const response = (await payload.create({
       collection: 'users',
       data: userData,
-    })
+    })) as User
 
-    // Extract role IDs from the response
-    const roleIds = (response?.roles as Role[])?.map((role) => role.id)
+    const tenantRoles = response.tenants?.map((tenantRole) => ({
+      tenantId: (tenantRole.tenant as Tenant).id,
+      roleIds: (tenantRole.roles as Role[]).map((role) => role.id),
+    }))
 
     expect(response.email).toBe(userData.email)
     expect(response.firstName).toBe(userData.firstName)
     expect(response.lastName).toBe(userData.lastName)
-    expect(roleIds).toContain(roleId) // Verify the role association
+    expect(tenantRoles).toContainEqual({ tenantId, roleIds: [tenantRoleId] }) // Verify tenant and role association
   })
 
-  it('should read an existing user with their role', async () => {
+  it('should read an existing user with their role and tenant', async () => {
     const userEmail = 'testuser@example.com'
 
     const response = await payload.find({
@@ -56,15 +96,19 @@ describe('[Users]', () => {
       },
     })
 
-    // Extract role IDs from the response
-    const roleIds = (response?.docs?.[0]?.roles as Role[])?.map((role: Role) => role.id)
+    const user = response.docs[0] as User
+
+    const tenantRoles = user?.tenants?.map((tenantRole) => ({
+      tenantId: (tenantRole.tenant as Tenant).id,
+      roleIds: (tenantRole.roles as Role[]).map((role) => role.id),
+    }))
 
     expect(response.docs.length).toBeGreaterThan(0)
-    expect(response.docs[0].email).toBe(userEmail)
-    expect(roleIds).toContain(roleId) // Verify the role association
+    expect(user?.email).toBe(userEmail)
+    expect(tenantRoles).toContainEqual({ tenantId, roleIds: [tenantRoleId] }) // Verify tenant and role association
   })
 
-  it("should update an existing user's role", async () => {
+  it("should update an existing user's role and tenant", async () => {
     const userEmail = 'testuser@example.com'
 
     const users = await payload.find({
@@ -76,11 +120,13 @@ describe('[Users]', () => {
       },
     })
 
-    const userId = users.docs?.[0]?.id
+    const userId = users?.docs?.[0]?.id
 
+    // Create a new tenant-specific role
     const newRoleData = {
       name: 'Editor',
       description: 'Editor role',
+      type: 'tenant' as const,
     }
 
     const newRoleResponse = await payload.create({
@@ -88,18 +134,27 @@ describe('[Users]', () => {
       data: newRoleData,
     })
 
-    const updatedRoleId = newRoleResponse.id
+    const updatedRoleId = newRoleResponse.id as string
 
-    const response = await payload.update({
+    const response = (await payload.update({
       collection: 'users',
       id: userId,
-      data: { roles: [updatedRoleId] },
-    })
+      data: {
+        tenants: [
+          {
+            tenant: tenantId,
+            roles: [updatedRoleId], // Update with new roles array
+          },
+        ],
+      },
+    })) as User
 
-    // Extract role IDs from the response
-    const updatedRoleIds = (response?.roles as Role[])?.map((role: Role) => role.id)
+    const updatedTenantRoles = response.tenants?.map((tenantRole) => ({
+      tenantId: (tenantRole.tenant as Tenant).id,
+      roleIds: (tenantRole.roles as Role[]).map((role) => role.id),
+    }))
 
-    expect(updatedRoleIds).toContain(updatedRoleId) // Verify the updated role association
+    expect(updatedTenantRoles).toContainEqual({ tenantId, roleIds: [updatedRoleId] }) // Verify updated tenant and role association
   })
 
   it('should delete an existing user', async () => {
@@ -114,7 +169,7 @@ describe('[Users]', () => {
       },
     })
 
-    const userId = users.docs?.[0]?.id
+    const userId = users?.docs?.[0]?.id
 
     await payload.delete({
       collection: 'users',
@@ -132,13 +187,5 @@ describe('[Users]', () => {
     })
 
     expect(verifyResponse.docs.length).toBe(0)
-  })
-
-  afterAll(async () => {
-    // Clean up the created role
-    await payload.delete({
-      collection: 'roles',
-      id: roleId,
-    })
   })
 })

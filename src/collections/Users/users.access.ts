@@ -1,14 +1,14 @@
+import { isSystemAdmin, isSystemAdminOrSelf } from '@/access'
 import { CollectionConfig } from 'payload'
-import { boolean, isAdmin, isAdminOrSelf } from '@/access'
 
 /**
  * Defines access control for the collection.
  */
 export const access: CollectionConfig['access'] = {
-  read: isAdminOrSelf,
-  create: boolean(isAdmin),
-  update: isAdminOrSelf,
-  delete: isAdmin,
-  admin: boolean(isAdmin),
-  unlock: boolean(isAdmin),
+  read: isSystemAdminOrSelf,
+  create: isSystemAdmin,
+  update: isSystemAdminOrSelf,
+  delete: isSystemAdmin,
+  //admin: boolean(isSystemAdmin),
+  unlock: isSystemAdmin,
 }

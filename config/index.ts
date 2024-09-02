@@ -25,6 +25,27 @@ const configSchema = z.object({
         .default(process.env.PAYLOAD_SECRET ?? ''),
     })
     .default({}),
+  roles: z
+    .object({
+      system: z
+        .object({
+          admin: z.object({ name: z.string().default('Admin'), description: z.string().default('Admin') }).default({}),
+          user: z.object({ name: z.string().default('User'), description: z.string().default('User') }).default({}),
+        })
+        .default({}),
+    })
+    .default({}),
+  tenants: z
+    .object({
+      default: z
+        .object({
+          name: z.string().default('Default'),
+          description: z.string().default('Default tenant'),
+        })
+        .default({}),
+    })
+    .default({}),
+  integrations: z.object({}).default({}),
 })
 
 // Infer the type from the schema

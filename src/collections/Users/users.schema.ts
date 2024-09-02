@@ -1,11 +1,13 @@
-import { boolean, isAdmin } from '@/access'
+import { boolean, isTenantAdmin } from '@/access'
 import { CollectionConfig } from 'payload'
 import { access } from './users.access'
 import { hooks } from './users.hooks'
 
 const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    useAPIKey: true,
+  },
   access,
   admin: {
     useAsTitle: 'fullName',
@@ -45,11 +47,46 @@ const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'roles',
       hasMany: true,
+      required: true,
       access: {
         read: () => true,
-        create: boolean(isAdmin),
-        update: boolean(isAdmin),
+        create: boolean(isTenantAdmin),
+        update: boolean(isTenantAdmin),
       },
+      filterOptions: () => ({
+        type: {
+          equals: 'system',
+        },
+      }),
+    },
+    {
+      name: 'tenants',
+      type: 'array',
+      access: {
+        read: () => true,
+        create: boolean(isTenantAdmin),
+        update: boolean(isTenantAdmin),
+      },
+      fields: [
+        {
+          name: 'tenant',
+          type: 'relationship',
+          relationTo: 'tenants',
+          required: true,
+        },
+        {
+          name: 'roles',
+          type: 'relationship',
+          relationTo: 'roles',
+          hasMany: true,
+          required: true,
+          filterOptions: () => ({
+            type: {
+              equals: 'tenant',
+            },
+          }),
+        },
+      ],
     },
   ],
   hooks,

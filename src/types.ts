@@ -13,6 +13,7 @@ export interface Config {
   collections: {
     users: User;
     roles: Role;
+    tenants: Tenant;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -52,9 +53,19 @@ export interface User {
   firstName: string;
   lastName: string;
   fullName?: string | null;
-  roles?: (string | Role)[] | null;
+  roles: (string | Role)[];
+  tenants?:
+    | {
+        tenant: string | Tenant;
+        roles: (string | Role)[];
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -69,6 +80,18 @@ export interface User {
  * via the `definition` "roles".
  */
 export interface Role {
+  id: string;
+  name: string;
+  description: string;
+  type: 'system' | 'tenant';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants".
+ */
+export interface Tenant {
   id: string;
   name: string;
   description: string;

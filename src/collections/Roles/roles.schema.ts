@@ -19,6 +19,22 @@ const Roles: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'type',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          label: 'System',
+          value: 'system',
+        },
+        {
+          label: 'Tenant',
+          value: 'tenant',
+        },
+      ],
+      defaultValue: 'system',
+    },
   ],
   hooks,
 }
