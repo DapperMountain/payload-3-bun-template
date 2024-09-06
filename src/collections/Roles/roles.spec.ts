@@ -1,19 +1,10 @@
 import { payload } from '@/test/config'
-import { createRole, createTenant, deleteResourceById, findResourceByName } from '@/test/helpers'
+import { createRole, deleteResourceById, findResourceByName } from '@/test/helpers'
 import { Role } from '@/types'
 import { describe, expect, it } from 'bun:test'
 
 describe('[Roles]', () => {
   let roleId: string
-  let tenantId: string
-
-  it('should create a new tenant', async () => {
-    const tenantResponse = await createTenant(payload, {
-      name: 'Test Tenant',
-      description: 'Tenant for testing',
-    })
-    tenantId = tenantResponse.id
-  })
 
   it('should create a new role', async () => {
     const roleResponse = await createRole(payload, {

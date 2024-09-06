@@ -14,7 +14,7 @@
     "db:seed:run": "bun prefix tsx ./src/database/seed",
     "db:migrate:run": "bun prefix payload migrate",
     "db:migrate:create": "bun prefix payload migrate:create",
-    "lint": "bun prefix next lint",
+    "lint": "bun prefix eslint .",
     "format": "prettier .",
     "start": "bun prefix next start",
     "test": "bun test --preload ./src/test/config.ts",

@@ -1,4 +1,4 @@
-import { Role, Tenant, User } from '@/types'
+import { Role, User } from '@/types'
 
 /**
  * Retrieves the user's roles associated with specific tenants.
@@ -15,7 +15,12 @@ export const getTenantRoles = (user: User, tenantIds: string[] = []): Role[] => 
   )
 }
 
-// Helper function to determine tenant IDs the user is part of
-export const getTenantIdsForUser = (user: any): string[] => {
-  return user?.tenants?.map(({ tenant }: { tenant: Tenant }) => (typeof tenant === 'string' ? tenant : tenant.id)) || []
+/**
+ * Retrieves the tenant IDs associated with a user.
+ *
+ * @param user - The user object containing tenant information.
+ * @returns An array of tenant IDs.
+ */
+export const getTenantIdsForUser = (user: User): string[] => {
+  return user.tenants?.map(({ tenant }) => (typeof tenant === 'string' ? tenant : tenant.id)) || []
 }

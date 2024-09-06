@@ -9,7 +9,7 @@ import { combineAccessResults, evaluateAccessResults } from './accessResults'
  * @param accessFns - The access functions to evaluate.
  * @returns An access function that returns the combined access result.
  */
-export const requireOne = <T = any>(...accessFns: Access<T>[]): Access<T> => {
+export const requireOne = <T = unknown>(...accessFns: Access<T>[]): Access<T> => {
   return async (args: AccessArgs<T>): Promise<AccessResult> => {
     const results = await evaluateAccessResults(accessFns, args)
     return combineAccessResults(results, 'or', true)
