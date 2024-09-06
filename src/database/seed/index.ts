@@ -1,6 +1,7 @@
 import payloadConfig from '@payload-config'
 import { getPayload } from 'payload'
 import addRoles from './Roles'
+import addTenants from './Tenants'
 import addUsers from './Users'
 
 /**
@@ -10,6 +11,7 @@ async function seed(): Promise<void> {
   const payload = await getPayload({ config: payloadConfig })
 
   const seeders = [
+    { name: 'Tenants', seedFunction: addTenants },
     { name: 'Roles', seedFunction: addRoles },
     { name: 'Users', seedFunction: addUsers },
   ]
