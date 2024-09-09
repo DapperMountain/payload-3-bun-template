@@ -30,7 +30,7 @@ afterAll(async () => {
   // Throw an error if we're not in the test environment so we don't reset the wrong database
   throwIfNotTestEnv()
 
-  // Fetch all table names from the current schema except the migration table
+  // Fetch all table names from the current schema
   const result = await payload.db.drizzle.execute(sql`
         SELECT tablename 
         FROM pg_tables 
@@ -39,7 +39,7 @@ afterAll(async () => {
 
   const tables: string[] = result.rows.map((row: { tablename: string }) => row.tablename as string)
 
-  // Truncate each table except the migration table
+  // Truncate each table
   for (const table of tables) {
     await payload.db.drizzle.execute(sql`TRUNCATE TABLE ${sql.raw(table)} RESTART IDENTITY CASCADE;`)
   }
