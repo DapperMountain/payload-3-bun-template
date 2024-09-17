@@ -10,35 +10,32 @@ import { isPromise } from './isPromise'
  * @param args - The arguments to pass to each access function.
  * @returns A promise that resolves to an array of access results (boolean or Where clause).
  */
-export const evaluateAccessResults = async (funcs: Access[], args: AccessArgs): Promise<(boolean | Where)[]> => {
-  return Promise.all(
+export const evaluateAccessResults = async (funcs: Access[], args: AccessArgs): Promise<(boolean | Where)[]> =>
+  Promise.all(
     funcs.map(async (func) => {
       const result = func(args)
       return isPromise(result) ? await result : result
     }),
   )
-}
 
 /**
- * Combines the results of access functions based on a specified logic (e.g., `and` or `or`).
+ * Combines the `Where` clauses (filters) from access function results.
+ * Handles multiple filters based on the provided logic (`and` or `or`).
  *
  * @param results - The results of the evaluated access functions.
  * @param logic - The logic to combine multiple `Where` clauses (`and` or `or`).
- * @param fullAccessCheck - The condition to grant full access (`true` or `false`).
- * @returns The combined access result based on the logic.
+ * @returns The combined filters or `true` if there are no filters to combine.
  */
-export const combineAccessResults = (
-  results: AccessResult[],
-  logic: 'and' | 'or',
-  fullAccessCheck: boolean,
-): AccessResult => {
-  if (results.some((result) => result === fullAccessCheck)) return fullAccessCheck
-
+export const combineAccessResults = (results: AccessResult[], logic: 'and' | 'or'): AccessResult => {
+  // Gather filters (e.g., `Where` clauses) from the results
   const filters = results.filter(isFilter)
 
-  if (filters.length === 0) return !fullAccessCheck
+  // If no filters exist, return `true` (default access)
+  if (filters.length === 0) return true
 
+  // If only one filter exists, return that filter
   if (filters.length === 1) return filters[0]
 
+  // Combine multiple filters using the specified logic (`and` or `or`)
   return { [logic]: filters }
 }

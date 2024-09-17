@@ -2,16 +2,22 @@ import { Access, AccessArgs, AccessResult } from 'payload'
 import { combineAccessResults, evaluateAccessResults } from './accessResults'
 
 /**
- * Requires all access functions to return `true` to grant full access.
- * If any access function returns an object (such as a `Where` clause), that object is returned to apply filtering or other conditions.
- * If not all functions return `true` and no objects are returned, access is denied by returning `false`.
- *
- * @param accessFns - The access functions to evaluate.
- * @returns An access function that returns the combined access result.
+ * Requires all access functions to return `true` or valid filters (`Where` clauses).
+ * If any function denies access (`false`), access is denied.
+ * If the user is a system admin, access is granted immediately.
+ * Combines filters using `and` logic.
  */
-export const requireAll = <T = unknown>(...accessFns: Access<T>[]): Access<T> => {
-  return async (args: AccessArgs<T>): Promise<AccessResult> => {
+export const requireAll =
+  <T = unknown>(...accessFns: Access<T>[]): Access<T> =>
+  async (args: AccessArgs<T>): Promise<AccessResult> => {
+    // Evaluate all other access functions
     const results = await evaluateAccessResults(accessFns, args)
-    return combineAccessResults(results, 'and', false)
+
+    // If any result is `false`, deny access immediately
+    if (results.includes(false)) {
+      return false
+    }
+
+    // Combine the filters (`Where` clauses) using `and` logic
+    return combineAccessResults(results, 'and')
   }
-}

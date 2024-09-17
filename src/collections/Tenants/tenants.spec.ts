@@ -1,7 +1,7 @@
 import { payload } from '@/test/config'
-import { createTenant, deleteResourceById, findResourceByName } from '@/test/helpers'
+import { createTenant, deleteResourceById, findResourceByKey } from '@/test/helpers'
 import { Tenant } from '@/types'
-import { afterAll, describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 
 describe('[Tenants]', () => {
   let tenantId: string
@@ -18,7 +18,7 @@ describe('[Tenants]', () => {
   })
 
   it('should read an existing tenant', async () => {
-    const tenant = await findResourceByName<Tenant>(payload, 'tenants', 'Test Tenant')
+    const tenant = await findResourceByKey<Tenant>(payload, 'tenants', 'name', 'Test Tenant')
     expect(tenant.name).toBe('Test Tenant')
   })
 
@@ -35,9 +35,5 @@ describe('[Tenants]', () => {
 
   it('should delete an existing tenant', async () => {
     await deleteResourceById(payload, 'tenants', tenantId)
-  })
-
-  afterAll(async () => {
-    // Cleanup if necessary
   })
 })

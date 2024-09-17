@@ -1,5 +1,5 @@
 import { payload } from '@/test/config'
-import { createRole, deleteResourceById, findResourceByName } from '@/test/helpers'
+import { createRole, deleteResourceById, findResourceByKey } from '@/test/helpers'
 import { Role } from '@/types'
 import { describe, expect, it } from 'bun:test'
 
@@ -19,7 +19,7 @@ describe('[Roles]', () => {
   })
 
   it('should read an existing role', async () => {
-    const role = await findResourceByName<Role>(payload, 'roles', 'Admin')
+    const role = await findResourceByKey<Role>(payload, 'roles', 'name', 'Admin')
 
     expect(role.name).toBe('Admin')
   })
