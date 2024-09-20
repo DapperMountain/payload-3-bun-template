@@ -28,16 +28,11 @@ const Users: CollectionConfig = {
     {
       name: 'fullName',
       type: 'text',
+      virtual: true,
       admin: {
         hidden: true,
       },
       hooks: {
-        // Ensure `fullName` field doesn't get passed to the database
-        beforeChange: [
-          ({ siblingData }) => {
-            delete siblingData['fullName']
-          },
-        ],
         // Concatenate `firstName` and `lastName` fields
         afterRead: [({ data }) => `${data?.firstName} ${data?.lastName}`],
       },
