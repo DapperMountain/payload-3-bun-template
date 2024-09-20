@@ -13,6 +13,10 @@ type Query {
   Tenants(draft: Boolean, where: Tenant_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): Tenants
   countTenants(draft: Boolean, where: Tenant_where, locale: LocaleInputType): countTenants
   docAccessTenant(id: String!): tenantsDocAccess
+  PayloadLockedDocument(id: String!, draft: Boolean, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType): PayloadLockedDocument
+  PayloadLockedDocuments(draft: Boolean, where: PayloadLockedDocument_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): PayloadLockedDocuments
+  countPayloadLockedDocuments(draft: Boolean, where: PayloadLockedDocument_where, locale: LocaleInputType): countPayloadLockedDocuments
+  docAccessPayloadLockedDocument(id: String!): payload_locked_documentsDocAccess
   PayloadPreference(id: String!, draft: Boolean, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType): PayloadPreference
   PayloadPreferences(draft: Boolean, where: PayloadPreference_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, sort: String): PayloadPreferences
   countPayloadPreferences(draft: Boolean, where: PayloadPreference_where, locale: LocaleInputType): countPayloadPreferences
@@ -21,7 +25,7 @@ type Query {
 }
 
 type User {
-  id: String
+  id: String!
   firstName: String!
   lastName: String!
   fullName: String
@@ -43,7 +47,7 @@ type User {
 }
 
 type Role {
-  id: String
+  id: String!
   name: String!
   description: String!
   type: Role_type!
@@ -79,7 +83,7 @@ type User_Tenants {
 }
 
 type Tenant {
-  id: String
+  id: String!
   name: String!
   description: String!
   updatedAt: DateTime
@@ -1177,8 +1181,307 @@ type TenantsDeleteDocAccess {
   where: JSONObject
 }
 
+type PayloadLockedDocument {
+  id: String!
+  document(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): PayloadLockedDocument_Document_Relationship
+  globalSlug: String
+  user(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): PayloadLockedDocument_User_Relationship!
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type PayloadLockedDocument_Document_Relationship {
+  relationTo: PayloadLockedDocument_Document_RelationTo
+  value: PayloadLockedDocument_Document
+}
+
+enum PayloadLockedDocument_Document_RelationTo {
+  users
+  roles
+  tenants
+}
+
+union PayloadLockedDocument_Document = User | Role | Tenant
+
+type PayloadLockedDocument_User_Relationship {
+  relationTo: PayloadLockedDocument_User_RelationTo
+  value: PayloadLockedDocument_User
+}
+
+enum PayloadLockedDocument_User_RelationTo {
+  users
+}
+
+union PayloadLockedDocument_User = User
+
+type PayloadLockedDocuments {
+  docs: [PayloadLockedDocument]
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  limit: Int
+  nextPage: Int
+  offset: Int
+  page: Int
+  pagingCounter: Int
+  prevPage: Int
+  totalDocs: Int
+  totalPages: Int
+}
+
+input PayloadLockedDocument_where {
+  document: PayloadLockedDocument_document_Relation
+  globalSlug: PayloadLockedDocument_globalSlug_operator
+  user: PayloadLockedDocument_user_Relation
+  updatedAt: PayloadLockedDocument_updatedAt_operator
+  createdAt: PayloadLockedDocument_createdAt_operator
+  id: PayloadLockedDocument_id_operator
+  AND: [PayloadLockedDocument_where_and]
+  OR: [PayloadLockedDocument_where_or]
+}
+
+input PayloadLockedDocument_document_Relation {
+  relationTo: PayloadLockedDocument_document_Relation_RelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocument_document_Relation_RelationTo {
+  users
+  roles
+  tenants
+}
+
+input PayloadLockedDocument_globalSlug_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input PayloadLockedDocument_user_Relation {
+  relationTo: PayloadLockedDocument_user_Relation_RelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocument_user_Relation_RelationTo {
+  users
+}
+
+input PayloadLockedDocument_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input PayloadLockedDocument_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input PayloadLockedDocument_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input PayloadLockedDocument_where_and {
+  document: PayloadLockedDocument_document_Relation
+  globalSlug: PayloadLockedDocument_globalSlug_operator
+  user: PayloadLockedDocument_user_Relation
+  updatedAt: PayloadLockedDocument_updatedAt_operator
+  createdAt: PayloadLockedDocument_createdAt_operator
+  id: PayloadLockedDocument_id_operator
+  AND: [PayloadLockedDocument_where_and]
+  OR: [PayloadLockedDocument_where_or]
+}
+
+input PayloadLockedDocument_where_or {
+  document: PayloadLockedDocument_document_Relation
+  globalSlug: PayloadLockedDocument_globalSlug_operator
+  user: PayloadLockedDocument_user_Relation
+  updatedAt: PayloadLockedDocument_updatedAt_operator
+  createdAt: PayloadLockedDocument_createdAt_operator
+  id: PayloadLockedDocument_id_operator
+  AND: [PayloadLockedDocument_where_and]
+  OR: [PayloadLockedDocument_where_or]
+}
+
+type countPayloadLockedDocuments {
+  totalDocs: Int
+}
+
+type payload_locked_documentsDocAccess {
+  fields: PayloadLockedDocumentsDocAccessFields
+  create: PayloadLockedDocumentsCreateDocAccess
+  read: PayloadLockedDocumentsReadDocAccess
+  update: PayloadLockedDocumentsUpdateDocAccess
+  delete: PayloadLockedDocumentsDeleteDocAccess
+}
+
+type PayloadLockedDocumentsDocAccessFields {
+  document: PayloadLockedDocumentsDocAccessFields_document
+  globalSlug: PayloadLockedDocumentsDocAccessFields_globalSlug
+  user: PayloadLockedDocumentsDocAccessFields_user
+  updatedAt: PayloadLockedDocumentsDocAccessFields_updatedAt
+  createdAt: PayloadLockedDocumentsDocAccessFields_createdAt
+}
+
+type PayloadLockedDocumentsDocAccessFields_document {
+  create: PayloadLockedDocumentsDocAccessFields_document_Create
+  read: PayloadLockedDocumentsDocAccessFields_document_Read
+  update: PayloadLockedDocumentsDocAccessFields_document_Update
+  delete: PayloadLockedDocumentsDocAccessFields_document_Delete
+}
+
+type PayloadLockedDocumentsDocAccessFields_document_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_document_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_document_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_document_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_globalSlug {
+  create: PayloadLockedDocumentsDocAccessFields_globalSlug_Create
+  read: PayloadLockedDocumentsDocAccessFields_globalSlug_Read
+  update: PayloadLockedDocumentsDocAccessFields_globalSlug_Update
+  delete: PayloadLockedDocumentsDocAccessFields_globalSlug_Delete
+}
+
+type PayloadLockedDocumentsDocAccessFields_globalSlug_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_globalSlug_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_globalSlug_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_globalSlug_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_user {
+  create: PayloadLockedDocumentsDocAccessFields_user_Create
+  read: PayloadLockedDocumentsDocAccessFields_user_Read
+  update: PayloadLockedDocumentsDocAccessFields_user_Update
+  delete: PayloadLockedDocumentsDocAccessFields_user_Delete
+}
+
+type PayloadLockedDocumentsDocAccessFields_user_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_user_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_user_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_user_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_updatedAt {
+  create: PayloadLockedDocumentsDocAccessFields_updatedAt_Create
+  read: PayloadLockedDocumentsDocAccessFields_updatedAt_Read
+  update: PayloadLockedDocumentsDocAccessFields_updatedAt_Update
+  delete: PayloadLockedDocumentsDocAccessFields_updatedAt_Delete
+}
+
+type PayloadLockedDocumentsDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_createdAt {
+  create: PayloadLockedDocumentsDocAccessFields_createdAt_Create
+  read: PayloadLockedDocumentsDocAccessFields_createdAt_Read
+  update: PayloadLockedDocumentsDocAccessFields_createdAt_Update
+  delete: PayloadLockedDocumentsDocAccessFields_createdAt_Delete
+}
+
+type PayloadLockedDocumentsDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsCreateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsUpdateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
 type PayloadPreference {
-  id: String
+  id: String!
   user(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): PayloadPreference_User_Relationship!
   key: String
   value: JSON
@@ -1467,6 +1770,7 @@ type Access {
   users: usersAccess
   roles: rolesAccess
   tenants: tenantsAccess
+  payload_locked_documents: payload_locked_documentsAccess
   payload_preferences: payload_preferencesAccess
 }
 
@@ -2125,6 +2429,157 @@ type TenantsDeleteAccess {
   where: JSONObject
 }
 
+type payload_locked_documentsAccess {
+  fields: PayloadLockedDocumentsFields
+  create: PayloadLockedDocumentsCreateAccess
+  read: PayloadLockedDocumentsReadAccess
+  update: PayloadLockedDocumentsUpdateAccess
+  delete: PayloadLockedDocumentsDeleteAccess
+}
+
+type PayloadLockedDocumentsFields {
+  document: PayloadLockedDocumentsFields_document
+  globalSlug: PayloadLockedDocumentsFields_globalSlug
+  user: PayloadLockedDocumentsFields_user
+  updatedAt: PayloadLockedDocumentsFields_updatedAt
+  createdAt: PayloadLockedDocumentsFields_createdAt
+}
+
+type PayloadLockedDocumentsFields_document {
+  create: PayloadLockedDocumentsFields_document_Create
+  read: PayloadLockedDocumentsFields_document_Read
+  update: PayloadLockedDocumentsFields_document_Update
+  delete: PayloadLockedDocumentsFields_document_Delete
+}
+
+type PayloadLockedDocumentsFields_document_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_document_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_document_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_document_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_globalSlug {
+  create: PayloadLockedDocumentsFields_globalSlug_Create
+  read: PayloadLockedDocumentsFields_globalSlug_Read
+  update: PayloadLockedDocumentsFields_globalSlug_Update
+  delete: PayloadLockedDocumentsFields_globalSlug_Delete
+}
+
+type PayloadLockedDocumentsFields_globalSlug_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_globalSlug_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_globalSlug_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_globalSlug_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_user {
+  create: PayloadLockedDocumentsFields_user_Create
+  read: PayloadLockedDocumentsFields_user_Read
+  update: PayloadLockedDocumentsFields_user_Update
+  delete: PayloadLockedDocumentsFields_user_Delete
+}
+
+type PayloadLockedDocumentsFields_user_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_user_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_user_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_user_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_updatedAt {
+  create: PayloadLockedDocumentsFields_updatedAt_Create
+  read: PayloadLockedDocumentsFields_updatedAt_Read
+  update: PayloadLockedDocumentsFields_updatedAt_Update
+  delete: PayloadLockedDocumentsFields_updatedAt_Delete
+}
+
+type PayloadLockedDocumentsFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_createdAt {
+  create: PayloadLockedDocumentsFields_createdAt_Create
+  read: PayloadLockedDocumentsFields_createdAt_Read
+  update: PayloadLockedDocumentsFields_createdAt_Update
+  delete: PayloadLockedDocumentsFields_createdAt_Delete
+}
+
+type PayloadLockedDocumentsFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadLockedDocumentsCreateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadLockedDocumentsDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
 type payload_preferencesAccess {
   fields: PayloadPreferencesFields
   create: PayloadPreferencesCreateAccess
@@ -2295,6 +2750,10 @@ type Mutation {
   updateTenant(id: String!, autosave: Boolean, data: mutationTenantUpdateInput!, draft: Boolean, locale: LocaleInputType): Tenant
   deleteTenant(id: String!): Tenant
   duplicateTenant(id: String!): Tenant
+  createPayloadLockedDocument(data: mutationPayloadLockedDocumentInput!, draft: Boolean, locale: LocaleInputType): PayloadLockedDocument
+  updatePayloadLockedDocument(id: String!, autosave: Boolean, data: mutationPayloadLockedDocumentUpdateInput!, draft: Boolean, locale: LocaleInputType): PayloadLockedDocument
+  deletePayloadLockedDocument(id: String!): PayloadLockedDocument
+  duplicatePayloadLockedDocument(id: String!): PayloadLockedDocument
   createPayloadPreference(data: mutationPayloadPreferenceInput!, draft: Boolean, locale: LocaleInputType): PayloadPreference
   updatePayloadPreference(id: String!, autosave: Boolean, data: mutationPayloadPreferenceUpdateInput!, draft: Boolean, locale: LocaleInputType): PayloadPreference
   deletePayloadPreference(id: String!): PayloadPreference
@@ -2416,6 +2875,62 @@ input mutationTenantUpdateInput {
   description: String
   updatedAt: String
   createdAt: String
+}
+
+input mutationPayloadLockedDocumentInput {
+  document: PayloadLockedDocument_DocumentRelationshipInput
+  globalSlug: String
+  user: PayloadLockedDocument_UserRelationshipInput
+  updatedAt: String
+  createdAt: String
+}
+
+input PayloadLockedDocument_DocumentRelationshipInput {
+  relationTo: PayloadLockedDocument_DocumentRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocument_DocumentRelationshipInputRelationTo {
+  users
+  roles
+  tenants
+}
+
+input PayloadLockedDocument_UserRelationshipInput {
+  relationTo: PayloadLockedDocument_UserRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocument_UserRelationshipInputRelationTo {
+  users
+}
+
+input mutationPayloadLockedDocumentUpdateInput {
+  document: PayloadLockedDocumentUpdate_DocumentRelationshipInput
+  globalSlug: String
+  user: PayloadLockedDocumentUpdate_UserRelationshipInput
+  updatedAt: String
+  createdAt: String
+}
+
+input PayloadLockedDocumentUpdate_DocumentRelationshipInput {
+  relationTo: PayloadLockedDocumentUpdate_DocumentRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocumentUpdate_DocumentRelationshipInputRelationTo {
+  users
+  roles
+  tenants
+}
+
+input PayloadLockedDocumentUpdate_UserRelationshipInput {
+  relationTo: PayloadLockedDocumentUpdate_UserRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadLockedDocumentUpdate_UserRelationshipInputRelationTo {
+  users
 }
 
 input mutationPayloadPreferenceInput {

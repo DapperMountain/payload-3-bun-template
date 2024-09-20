@@ -14,6 +14,7 @@ export interface Config {
     users: User;
     roles: Role;
     tenants: Tenant;
+    'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -95,6 +96,33 @@ export interface Tenant {
   id: string;
   name: string;
   description: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents".
+ */
+export interface PayloadLockedDocument {
+  id: string;
+  document?:
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null)
+    | ({
+        relationTo: 'roles';
+        value: string | Role;
+      } | null)
+    | ({
+        relationTo: 'tenants';
+        value: string | Tenant;
+      } | null);
+  globalSlug?: string | null;
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
   updatedAt: string;
   createdAt: string;
 }
