@@ -1,5 +1,7 @@
-import { isSystemAdmin, isTenant, isTenantAdmin } from '@/access'
+import isSystemAdmin from '@/collections/Roles/access/isSystemAdmin'
 import { CollectionConfig } from 'payload'
+import isTenant from './isTenant'
+import isTenantAdmin from './isTenantAdmin'
 
 /**
  * Defines access control for the collection.

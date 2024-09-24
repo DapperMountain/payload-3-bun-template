@@ -1,7 +1,7 @@
 import { Config } from 'payload'
-import Roles from './Roles/roles.schema'
-import Tenants from './Tenants/tenants.schema'
-import Users from './Users/users.schema'
+import Roles from './Roles'
+import Tenants from './Tenants'
+import Users from './Users'
 
 const collections: Config['collections'] = [Users, Roles, Tenants]
 

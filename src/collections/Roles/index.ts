@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload'
-import { access } from './roles.access'
-import { hooks } from './roles.hooks'
+import { access } from './access'
+import { hooks } from './hooks'
 
 const Roles: CollectionConfig = {
   slug: 'roles',

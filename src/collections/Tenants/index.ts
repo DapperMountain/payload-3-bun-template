@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload'
-import { hooks } from '../Users/users.hooks'
-import { access } from './tenants.access'
+import { hooks } from '../Users/hooks'
+import { access } from './access'
 
 const Tenants: CollectionConfig = {
   slug: 'tenants',

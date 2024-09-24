@@ -1,6 +1,6 @@
+import isAuthenticated from '@/access/auth/isAuthenticated'
+import isSystemAdmin from '@/collections/Roles/access/isSystemAdmin'
 import { Access, AccessArgs, AccessResult } from 'payload'
-import { isAuthenticated } from '../auth'
-import { isSystemAdmin } from '../roles/isSystemAdmin'
 
 /**
  * Higher-order function to wrap access functions with a system admin check.

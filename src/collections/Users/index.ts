@@ -1,7 +1,8 @@
-import { boolean, isTenantAdmin } from '@/access'
+import { boolean } from '@/access'
+import isTenantAdmin from '@/collections/Tenants/access/isTenantAdmin'
 import { CollectionConfig } from 'payload'
-import { access } from './users.access'
-import { hooks } from './users.hooks'
+import { access } from './access'
+import { hooks } from './hooks'
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -24,7 +25,6 @@ const Users: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    // `fullName` virtual field
     {
       name: 'fullName',
       type: 'text',

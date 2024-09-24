@@ -10,7 +10,7 @@ import { migrations } from '@/database/migrations'
 import collections from '@/collections'
 import { i18n, localization } from '@/lang'
 
-import Users from '@/collections/Users/users.schema'
+import Users from '@/collections/Users'
 import config from '@config'
 
 dotenv.config()
