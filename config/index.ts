@@ -8,7 +8,7 @@ const configSchema = z.object({
   baseURL: z
     .string()
     .url()
-    .default(process.env.BASE_URL ?? 'http://localhost:3001'),
+    .default(process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3001'),
   database: z
     .object({
       uri: z
