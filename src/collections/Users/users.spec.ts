@@ -4,10 +4,10 @@ import { Role, Tenant, User } from '@/types'
 import { beforeAll, describe, expect, it } from 'bun:test'
 
 describe('[Users]', () => {
+  const userEmail = 'testuser@example.com'
   let systemRole: Role
   let tenantRole: Role
   let tenant: Tenant
-  let userEmail = 'testuser@example.com'
 
   // Helper function to verify tenant-role associations for users
   const verifyTenantRoleAssociation = (user: User, expectedTenantId: string, expectedRoleIds: string[]) => {
