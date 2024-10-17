@@ -1,4 +1,4 @@
+.env
 .history
 .next
-node_modules
-.env
+**/node_modules
