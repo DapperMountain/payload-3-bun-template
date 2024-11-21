@@ -37,7 +37,7 @@ afterAll(async () => {
         WHERE schemaname = 'public';
       `)
 
-  const tables: string[] = result.rows.map((row: { tablename: string }) => row.tablename as string)
+  const tables: string[] = result.rows.map((row) => row.tablename as string)
 
   // Truncate each table
   for (const table of tables) {

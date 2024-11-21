@@ -1,191 +1,76 @@
-* {
-  box-sizing: border-box;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-html {
-  width: 100%;
-  height: 100%;
-  background-color: #000000;
-}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-body {
-  color: #ffffff;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 0 20px;
-}
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-main {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  min-height: 100vh;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-block: 80px;
-  border-inline-width: 1px;
-  border-inline-style: solid;
-  border-image: linear-gradient(180deg, #ffffff00, #ffffff00, #ffffff1a, #ffffff00) 1;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-  @media screen and (max-width: 600px) {
-    padding-block: 20px;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
-article {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 60px 80px;
-
-  @media screen and (max-width: 600px) {
-    padding: 40px 40px;
+@layer base {
+  * {
+    @apply border-border;
   }
-}
-
-.badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 2.6px;
-}
-
-h1 {
-  color: #ffffff;
-  font-size: 4rem;
-  font-weight: 600;
-  line-height: normal;
-  letter-spacing: -0.02rem;
-  margin: 0;
-
-  @media screen and (max-width: 600px) {
-    font-size: 2rem;
-  }
-}
-
-p {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 300;
-  line-height: 28px;
-  margin: 0;
-}
-
-a {
-  color: #ffffff;
-  text-decoration: underline;
-  transition: color 0.2s ease-out;
-
-  &:hover {
-    color: #ffffff80;
-  }
-}
-
-.codeBlock {
-  position: relative;
-  background-color: #00000066;
-  margin: 0;
-  padding: 0;
-
-  pre {
-    margin: 0;
-    padding: 60px 80px;
-    overflow-x: auto;
-
-    @media screen and (max-width: 600px) {
-      padding: 40px 40px;
-    }
-
-    &::before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: calc(50% - 50vw);
-      width: 100vw;
-      height: 1px;
-      background: linear-gradient(90deg, #ffffff00, #ffffff1a, #ffffff1a, #ffffff00);
-      z-index: 1;
-    }
-
-    &::after {
-      content: url('/crosshair.svg');
-      display: block;
-      height: 19px;
-      width: 19px;
-      position: absolute;
-      top: -9px;
-      left: -10px;
-    }
-  }
-
-  code {
-    font-size: 14px;
-    line-height: 2;
-  }
-
-  &::before {
-    content: '';
-    display: block;
-    position: absolute;
-    bottom: 0;
-    left: calc(50% - 50vw);
-    width: 100vw;
-    height: 1px;
-    background: linear-gradient(90deg, #ffffff00, #ffffff1a, #ffffff1a, #ffffff00);
-    z-index: 1;
-  }
-
-  &::after {
-    content: url('/crosshair.svg');
-    display: block;
-    height: 19px;
-    width: 19px;
-    position: absolute;
-    bottom: -9px;
-    right: -10px;
-  }
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-
-  div.blur {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('/blur.png');
-    background-repeat: repeat;
-    background-size: 400px 400px;
-    background-blend-mode: soft-light, normal;
-    backdrop-filter: blur(60px);
-  }
-
-  div.gradient {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('/gradient.webp');
-    background-size: cover;
-    background-position: center;
-    z-index: -2;
+  body {
+    @apply bg-background text-foreground;
   }
 }

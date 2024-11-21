@@ -41,5 +41,6 @@ export default buildConfig({
       connectionString: config.database.uri,
     },
   }),
+  cors: [config.baseURL].filter(Boolean),
   telemetry: false,
 })

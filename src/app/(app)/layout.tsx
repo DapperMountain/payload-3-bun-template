@@ -1,17 +1,23 @@
-import React from 'react'
-import './globals.scss'
-import { Inter } from 'next/font/google'
+import type { ReactNode } from 'react'
 
-const inter = Inter({
+import { cn } from '@/lib/utils'
+import { Inter as FontSans } from 'next/font/google'
+
+type LayoutProps = {
+  children: ReactNode
+}
+
+import './globals.scss'
+
+const fontSans = FontSans({
   subsets: ['latin'],
-  display: 'swap',
+  variable: '--font-sans',
 })
 
-/* Our app sits here to not cause any conflicts with payload's root layout  */
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <html className={inter.className}>
-      <body>{children}</body>
+    <html lang="en">
+      <body className={cn('min-h-screen bg-background font-sans antialiased tw', fontSans.variable)}>{children}</body>
     </html>
   )
 }
