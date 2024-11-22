@@ -14,7 +14,10 @@ const configSchema = z.object({
       uri: z
         .string()
         .url()
-        .default((process.env.NODE_ENV === 'test' ? process.env.DATABASE_TEST_URI : process.env.DATABASE_URI) ?? ''),
+        .default(
+          (process.env.NODE_ENV?.toLowerCase() === 'test' ? process.env.DATABASE_TEST_URI : process.env.DATABASE_URI) ??
+            '',
+        ),
     })
     .default({}),
   payload: z
