@@ -31,4 +31,4 @@ async function seed(): Promise<void> {
   process.exit(0)
 }
 
-seed()
+await seed()
